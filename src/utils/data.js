@@ -5,7 +5,12 @@ import {
   LuClipboardCheck,
   LuSquarePlus,
   LuLogOut,
+  LuChartBar,
 } from "react-icons/lu";
+
+
+
+
 
 export const SIDE_MENU_DATA = [
   {
@@ -32,13 +37,22 @@ export const SIDE_MENU_DATA = [
     icon: LuUsers,
     path: "/admin/users",
   },
-     {
+   {
     id: "05",
+    label: "Chat",
+    icon: LuChartBar,
+    path: "/admin/chat",
+  },
+     {
+    id: "06",
     label: "Logout",
     icon: LuLogOut,
-    path: "/login",
+    path: "logout",
   },
 ];
+
+
+   
 
 export const SIDE_MENU_USER_DATA = [
   {
@@ -53,8 +67,14 @@ export const SIDE_MENU_USER_DATA = [
     icon: LuClipboardCheck,
     path: "/user/tasks",
   },
-  {
+   {
     id: "03",
+    label: "Chat",
+    icon: LuChartBar,
+    path: "/user/chat",
+  },
+  {
+    id: "04",
     label: "Logout",
     icon: LuLogOut,
     path: "logout",

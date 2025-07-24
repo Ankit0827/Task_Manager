@@ -48,15 +48,9 @@ const UserDashboard = () => {
             { priority: "Low", count: taskPriorityLevels?.Low || 0 },
             { priority: "Medium", count: taskPriorityLevels?.Medium || 0 },
             { priority: "High", count: taskPriorityLevels?.High || 0 },
-
-
         ]
-
         setBarChartData(taskPriorityLevelData)
-
     }
-
-
     const getDashboardData = async () => {
         try {
             const response = await axiosInstance.get(API_PATHS.TASKS.GET_USER_DASHBOARD_DATA);
@@ -71,7 +65,6 @@ const UserDashboard = () => {
 
         }
     };
-
     useEffect(() => {
         getDashboardData();
 
@@ -84,10 +77,6 @@ const UserDashboard = () => {
 
     }
 
-    // Prepare Chart Data
-
-
-
     return (
         <DashboardLayout activeMenu="Dashboard">
             <div className="card my-5">
@@ -97,7 +86,6 @@ const UserDashboard = () => {
                         <p className="text-xl md:[13px] text-gray-500 mt-1.5">
                             {moment().format('dddd Do MMM YYYY')}
                         </p>
-
                     </div>
                 </div>
                 <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-3 md:gap-6 mt-5">
@@ -119,13 +107,21 @@ const UserDashboard = () => {
                     <div className="flex items-center justify-between">
                         <h5>Task Distribution</h5>
                     </div>
-                    <CustomePieChart data={pieChartData} colors={COLORS} />
+                       {
+                        pieChartData ? <CustomePieChart data={pieChartData} colors={COLORS} /> : <div className="h-[30vh] flex items-center justify-center">
+                        <h2 className="text-gray-500">No data Available....</h2></div>
+                    }
                 </div>
                 <div className="card">
                     <div className="flex items-center justify-between">
                         <h5>Task Priority Lavels</h5>
                     </div>
-                    <CustomeBarChart data={barChartData} />
+                    {
+                        barChartData? <CustomeBarChart data={barChartData} />:<div className="flex items-center justify-center h-[30vh]">
+                            <h2 className="text-gray-500">No data Available....</h2>
+                        </div>
+                    }
+                   
                 </div>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 my-4 md:my-6">

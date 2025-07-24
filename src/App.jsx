@@ -14,6 +14,7 @@ import  { UserContext} from "./context/userContext";
 import UserProvider from "./context/userProvider"
 import { useContext } from "react";
 import { Toaster } from "react-hot-toast";
+import ChatPage from "./components/chats/ChatPage"
 
 
 
@@ -32,6 +33,8 @@ function App() {
             <Route path="/admin/tasks" element={<ManageTask />} />
             <Route path="/admin/create-task" element={<CreateTask />} />
             <Route path="/admin/users" element={<ManageUsers />} />
+              <Route path="/admin/chat" element={<ChatPage />} /> 
+              <Route path="/admin/chat/:userId" element={<ChatPage />} />
           </Route>
 
           {/* User Routes */}
@@ -39,6 +42,8 @@ function App() {
             <Route path="/user/dashboard" element={<UserDashboard />} />
             <Route path="/user/tasks" element={<MyTask />} />
              <Route path="/user/tasks-details/:id" element={<ViewTaskDetails/>} />
+              <Route path="/user/chat" element={<ChatPage />} /> 
+              <Route path="/user/chat/:userId" element={<ChatPage />} />
           </Route>
 
           {/* Default Routes */}
@@ -71,3 +76,4 @@ const Root=()=>{
 
   return user.role==="admin"?<Navigate to="/admin/dashboard"/>:<Navigate to="/user/dashboard"/>
 }
+

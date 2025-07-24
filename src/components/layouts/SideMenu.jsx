@@ -7,17 +7,13 @@ const SideMenu = ({ activeMenu }) => {
 
     const { user, clearUser } = useContext(UserContext);
     const [sideMenuData, setSideMenuData] = useState([]);
-
-
     const navigate = useNavigate();
-
 
     const handleClick = (route) => {
         if (route === "logout") {
             handleLogout();
             return;
         }
-
         navigate(route);
     };
 
@@ -27,16 +23,12 @@ const SideMenu = ({ activeMenu }) => {
         navigate("/login")
     }
 
-
     useEffect(() => {
         if (user) {
             setSideMenuData(user?.role === 'admin' ? SIDE_MENU_DATA : SIDE_MENU_USER_DATA)
         }
-
         return () => { }
     }, [user])
-
-
 
     return (
         <div className="w-64 h-[calc(100vh-61px)] bg-white border-r border-gray-200/50 sticky top-[61px] z-20">

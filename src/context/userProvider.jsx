@@ -33,6 +33,8 @@ const UserProvider = ({ children }) => {
         fetchUser();
     }, []); // Run only once on mount
 
+    console.log("user",user)
+
     const updatedUser = (userData) => {
         setUser(userData);
         localStorage.setItem("token", userData.token); // Save token

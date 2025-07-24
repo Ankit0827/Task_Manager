@@ -1,4 +1,4 @@
-export const BASE_URL = "http://localhost:8000";
+export const BASE_URL = import.meta.env.VITE_BACKEND_URL;
 
 export const API_PATHS = {
   AUTH: {
@@ -31,6 +31,13 @@ export const API_PATHS = {
   REPORTS: {
     EXPORT_TASKS: "/api/reports/export/tasks", // Export task data as an Excel file
     EXPORT_USERTASKS: "/api/reports/export/users", // Export task data as an Excel file
+  },
+
+  CHATS:{
+    TEAM_MEMBERS:"/api/message/users",
+    GET_MESSAGES:(userId)=>`/api/message/${userId}`,
+    SEND_MESSAGES:(userId)=>`/api/message/send/${userId}`
+
   },
 
   IMAGE: {

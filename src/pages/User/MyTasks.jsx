@@ -61,7 +61,8 @@ const MyTasks=()=>{
 
     return(
         <DashboardLayout activeMenu="My Tasks">
-            <div className="my-5">
+            {
+                allTasks? <div className="my-5">
                 <div className="flex flex-col lg:flex-row lg:items-center justify-between">
                     <div className="flex items-center justify-between gap-3">
                         <h2 className="text-xl md:text-xl font-medium ">My Tasks</h2>
@@ -95,7 +96,9 @@ const MyTasks=()=>{
                          onClick={()=>handleClick(item._id)}/>
                     ))}
                 </div>
-            </div>
+            </div>:<div className="flex items-center justify-center h-full"><h2 className="text-gray-500">No Task Available....</h2></div>
+            }
+           
            
         </DashboardLayout>
     )

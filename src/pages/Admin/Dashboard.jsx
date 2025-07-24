@@ -19,23 +19,14 @@ const COLORS = ["#8D51FF", "#00B8DB", "#50C878"]
 
 const Dashboard = () => {
     const { user } = useContext(UserContext);
-
     const [dashBoardData, setDashBoardData] = useState(null);
     const [pieChartData, setPieChartData] = useState([]);
     const [barChartData, setBarChartData] = useState([]);
-
     useUserAuth();
-
     const navigate = useNavigate();
-
     const prepareChartData = (data) => {
-
-
         const taskDistribution = data?.taskDistribution || null;
         const taskPriorityLevels = data?.taskPriorityLevels || null;
-
-         console.log("taskDistribution",taskDistribution)
-
         const taskDistributionData = [
             { status: "Pending", count: taskDistribution?.Pending || 0 },
             { status: "In progress", count: taskDistribution?.Inprogress || 0 },
@@ -48,46 +39,30 @@ const Dashboard = () => {
             { priority: "Low", count: taskPriorityLevels?.Low || 0 },
             { priority: "Medium", count: taskPriorityLevels?.Medium || 0 },
             { priority: "High", count: taskPriorityLevels?.High || 0 },
-
-
         ]
-
         setBarChartData(taskPriorityLevelData)
-
     }
-
-
     const getDashboardData = async () => {
         try {
             const response = await axiosInstance.get(API_PATHS.TASKS.GET_DASHBOARD_DATA);
-
             if (response?.data) {
                 setDashBoardData(response?.data);
                 prepareChartData(response?.data?.charts || null);
-
             }
         } catch (error) {
             console.error("Error fetching users:", error)
-
         }
     };
-
     useEffect(() => {
         getDashboardData();
-
         return () => { };
     }, [])
 
     const onSeeMore = () => {
-
         navigate("/admin/tasks")
-
     }
 
-    // Prepare Chart Data
-
-
-
+    // Prepare Chart Dat
     return (
         <DashboardLayout activeMenu="Dashboard">
             <div className="card my-5">
@@ -119,19 +94,22 @@ const Dashboard = () => {
                     <div className="flex items-center justify-between">
                         <h5>Task Distribution</h5>
                     </div>
-                    <CustomePieChart data={pieChartData} colors={COLORS} />
+                    {
+                        pieChartData ? <CustomePieChart data={pieChartData} colors={COLORS} /> : <div className="h-[30vh] flex items-center justify-center">
+                            <h2 className="text-gray-500">No data Available....</h2></div>
+                    }
                 </div>
                 <div className="card">
                     <div className="flex items-center justify-between">
                         <h5>Task Priority Lavels</h5>
                     </div>
-                    <CustomeBarChart data={barChartData} />
+                    {
+                        barChartData ? <CustomeBarChart data={barChartData} /> : <div className="h-[30vh] flex items-center justify-center">
+                            <h2 className="text-gray-500">No data Available....</h2></div>
+                    }
                 </div>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 my-4 md:my-6">
-
-
-
                 <div className="md:col-span-2">
                     <div className="card">
                         <div className="flex items-center justify-between">

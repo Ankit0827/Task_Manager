@@ -2,13 +2,14 @@ import { useContext, useState } from "react";
 import AuthLayout from "../../components/layouts/AuthLayout";
 import Input from "../../components/inputs/Input";
 import ProfilePhotoSelector from "../../components/inputs/ProfilePhotoSelector";
-import { validateEmail, validateFullName} from "../../utils/helper";
+import { validateEmail, validateFullName } from "../../utils/helper";
 import { Link, useNavigate } from "react-router-dom";
 import axiosInstance from "../../utils/axiosIntance";
 import { API_PATHS } from "../../utils/apiPaths";
 import { UserContext } from "../../context/userContext";
 import uploadImage from "../../utils/uploadImage";
-
+import toast from "react-hot-toast";
+import { debugAPI, debugError, extractData } from "../../utils/debug";
 
 const SignUp = () => {
   const [signupDetails, setSignupDetails] = useState({
@@ -20,6 +21,7 @@ const SignUp = () => {
   });
 
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
   const { updatedUser } = useContext(UserContext);
   const navigate = useNavigate();
 
@@ -31,10 +33,12 @@ const SignUp = () => {
     }));
   };
 
-
   const handleSignup = async (e) => {
     e.preventDefault();
-    const { name, email, password, profilePic } = signupDetails;
+    const { name, email, password, profilePic, adminInviteToken } = signupDetails;
+
+    // Clear previous errors
+    setError("");
 
     // Validation block
     if (!name) {
@@ -51,45 +55,74 @@ const SignUp = () => {
       return setError("*Please enter a valid email");
     }
 
-    if (!password || password.length < 8) {
-      return setError("*Please enter at least 8 characters for password");
+    if (!password || password.length < 6) {
+      return setError("*Password must be at least 6 characters");
     }
 
-    // if (!adminInviteToken) {
-    //   return setError("*Please enter a 6-digit token");
-    // }
-    // if (!validateSixDigitNumber(adminInviteToken)) {
-    //   return setError("*Only 6-digit numeric values are allowed");
-    // }
-
-    setError(""); // Clear error if all validations pass
+    setLoading(true);
 
     try {
       let profileImageUrl = "";
 
       // Upload profile image if selected
       if (profilePic) {
-        const imgUploadRes = await uploadImage(profilePic);
-        profileImageUrl = imgUploadRes.imageUrl || "";
+        try {
+          const imgUploadRes = await uploadImage(profilePic);
+          profileImageUrl = imgUploadRes.imageUrl || "";
+        } catch (uploadError) {
+          console.error("Image upload error:", uploadError);
+          setError("Failed to upload profile image. Please try again.");
+          setLoading(false);
+          return;
+        }
       }
 
       // Make API call
       const response = await axiosInstance.post(API_PATHS.AUTH.REGISTER, {
-        ...signupDetails,
+        name,
+        email,
+        password,
         profileImageUrl,
+        adminInviteToken: adminInviteToken || undefined
       });
 
-      const { token, role } = response.data;
+      // Debug the response
+      debugAPI(response, "REGISTER");
+
+      // Extract data using helper function
+      const userData = extractData(response);
+      const { token, role } = userData;
 
       if (token) {
         localStorage.setItem("token", token);
-        updatedUser(response.data);
+        updatedUser(userData);
+        
+        toast.success("Account created successfully!");
 
         navigate(role === "admin" ? "/admin/dashboard" : "/user/dashboard");
+      } else {
+        setError("Invalid response from server");
       }
     } catch (error) {
-      console.error(error);
-      setError("Something went wrong. Please try again.");
+      debugError(error, "REGISTER");
+      
+      if (error.response && error.response.data) {
+        const errorData = error.response.data;
+        if (errorData.errors && Array.isArray(errorData.errors)) {
+          setError(errorData.errors.join(", "));
+        } else {
+          setError(errorData.message || "Registration failed. Please try again.");
+        }
+        toast.error(errorData.message || "Registration failed");
+      } else if (error.message) {
+        setError("Network error. Please check your connection.");
+        toast.error("Network error");
+      } else {
+        setError("Something went wrong. Please try again.");
+        toast.error("Registration failed");
+      }
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -124,7 +157,7 @@ const SignUp = () => {
               value={signupDetails.email}
               onChange={handleInputChange}
               placeholder="john@example.com"
-              type="text"
+              type="email"
               label="Email Address"
             />
 
@@ -132,7 +165,7 @@ const SignUp = () => {
               name="password"
               value={signupDetails.password}
               onChange={handleInputChange}
-              placeholder="Min 8 characters"
+              placeholder="Min 6 characters"
               type="password"
               label="Password"
             />
@@ -141,7 +174,7 @@ const SignUp = () => {
               name="adminInviteToken"
               value={signupDetails.adminInviteToken}
               onChange={handleInputChange}
-              placeholder="6 Digit Code"
+              placeholder="Admin Token (Optional)"
               type="text"
               label="Admin Invite Token"
             />
@@ -149,9 +182,12 @@ const SignUp = () => {
 
           {error && <p className="text-red-500 text-xs pb-2.5 mt-2">{error}</p>}
 
-
-          <button type="submit" className="btn-primary">
-            SIGN UP
+          <button 
+            type="submit" 
+            className="btn-primary"
+            disabled={loading}
+          >
+            {loading ? "Creating Account..." : "SIGN UP"}
           </button>
 
           <p className="text-[13px] text-slate-800 mt-3">

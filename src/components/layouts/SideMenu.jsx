@@ -2,6 +2,7 @@ import { useContext, useEffect, useState } from "react"
 import { UserContext } from "../../context/userContext"
 import { useNavigate } from "react-router-dom";
 import { SIDE_MENU_DATA, SIDE_MENU_USER_DATA } from "../../utils/data";
+import socket from "../../utils/socket";
 
 const SideMenu = ({ activeMenu }) => {
 
@@ -18,9 +19,20 @@ const SideMenu = ({ activeMenu }) => {
     };
 
     const handleLogout = () => {
+        // Notify server that user is going offline
+        if (user?._id) {
+            socket.emit("userOffline", user._id);
+        }
+        
+        // Disconnect socket
+        socket.disconnect();
+        
+        // Clear local storage and user state
         localStorage.clear();
         clearUser();
-        navigate("/login")
+        
+        // Navigate to login
+        navigate("/login");
     }
 
     useEffect(() => {

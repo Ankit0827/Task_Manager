@@ -1,4 +1,4 @@
-export const BASE_URL = import.meta.env.VITE_BACKEND_URL;
+export const BASE_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000";
 
 export const API_PATHS = {
   AUTH: {
@@ -13,6 +13,8 @@ export const API_PATHS = {
     CREATE_USER: "/api/users", // Create a new user (Admin only)
     UPDATE_USER: (userId) => `/api/users/${userId}`, // Update user details
     DELETE_USER: (userId) => `/api/users/${userId}`, // Delete a user
+    UPDATE_USER_ROLE: (userId) => `/api/users/${userId}/role`, // Update user role (Admin only)
+    GET_REASSIGNMENT_OPTIONS: (userId) => `/api/users/reassignment-options/${userId}`, // Get users for task reassignment
   },
 
   TASKS: {
@@ -36,8 +38,8 @@ export const API_PATHS = {
   CHATS:{
     TEAM_MEMBERS:"/api/message/users",
     GET_MESSAGES:(userId)=>`/api/message/${userId}`,
-    SEND_MESSAGES:(userId)=>`/api/message/send/${userId}`
-
+    SEND_MESSAGES:(userId)=>`/api/message/send/${userId}`,
+    GET_NEW_MESSAGE_COUNT:(userId)=>`/api/message/unseen-count/${userId}`
   },
 
   IMAGE: {

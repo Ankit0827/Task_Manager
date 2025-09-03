@@ -4,28 +4,29 @@ import axiosInstance from "./axiosIntance";
 
 const uploadImage=async(imageFile)=>{
 
-    const formData=new FormData();
-    // Append image file to form Data
+	const formData=new FormData();
+	// Append image file to form Data
 
-    formData.append("image",imageFile);
+	formData.append("profileImage",imageFile);
 
-    try {
+	try {
 
-        const response= await axiosInstance.post(API_PATHS.IMAGE.UPLOAD_IMAGE,formData,{
-            headers:{
-                'Content-Type':'multipart/form-data'//set header for file upload
-            }
-        })
+		const response= await axiosInstance.post(API_PATHS.IMAGE.UPLOAD_IMAGE,formData,{
+			headers:{
+				'Content-Type':'multipart/form-data'//set header for file upload
+			}
+		})
 
 
-        return response.data  ;
-        
-    } catch (error) {
+		// Normalize to return inner data object { imageUrl, filename, ... }
+		return response.data?.data ;
+		
+	} catch (error) {
 
-        console.error('Error uploading image',error);
-        throw error; //Rethrow error for handling
-        
-    }
+		console.error('Error uploading image',error);
+		throw error; //Rethrow error for handling
+		
+	}
 
 }
 
